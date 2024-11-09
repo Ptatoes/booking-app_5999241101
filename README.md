@@ -1,135 +1,115 @@
-### **1) Introducing the net/http package (an interlude)**
+# Golang Tutorial for Beginners - Study Notes
 
-**Basic Server Setup:**
-
-- **Uses `net/http` package** to create a simple web server.
-- **`http.HandleFunc("/", handler)`**: Maps the root path (`"/"`) to the `handler` function.
-- **`http.ListenAndServe(":8080", nil)`**: Starts the server on port 8080, logging any errors.
-
-
-**Handler Function:**
-
-- **`handler(w, r)`**: Defines a basic HTTP handler function.
-- **`fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])`**: Sends a response using the URL path (drops the leading `/`).
- - **Example**: Visiting `http://localhost:8080/monkeys` responds with `Hi there, I love monkeys!`
-
-
-**Serving Wiki Pages:**
-
-- **Page Data**: Saved in `<title>.txt` files.
-
-**viewHandler:**
-- **Path Mapping**: Maps paths like `"/view/test"` to load data from `test.txt`.
-- **`loadPage(title)`**: Reads file content based on the title.
-- **Response**: Sends the page title and content as HTML in the response.
-- **Improved `main`**: Maps `/view/` URLs to `viewHandler`.
-
-**Steps to Run:**
-
-- **Content Example**: Save "Hello world" in `test.txt`.
-- **Run Commands**:
-  - Build with `$ go build wiki.go`
-  - Run with `$ ./wiki`
-- **View Result**: Visit `http://localhost:8080/view/test` to see "Hello world" displayed on the page titled "test".
-
-
-### **2)Editing Pages**
-- **Add Handlers**: In `main()`, we define three handlers:
-  - **`/view/`**: Displays the page.
-  - **`/edit/`**: Displays an "edit page" form.
-  - **`/save/`**: Saves the edited content.
-
-- **`editHandler(w, r)`**: Loads the page (or creates an empty page if it doesn't exist) and displays an HTML form for editing.
-  - The form sends a `POST` request to `/save/<title>`.
-  - **HTML Structure**: 
-    - Displays a `<textarea>` for editing content.
-    - Includes a submit button to save the changes.
-
-- **Improved `main`**: Adds the new handlers to the server.
-  - **Code**:
-    ```go
-    func main() {
-        http.HandleFunc("/view/", viewHandler)
-        http.HandleFunc("/edit/", editHandler)
-        http.HandleFunc("/save/", saveHandler)
-        log.Fatal(http.ListenAndServe(":8080", nil))
-    }
-    ```
-
-- **`editHandler(w, r)` Function**:
-  - **Code**:
-    ```go
-    func editHandler(w http.ResponseWriter, r *http.Request) {
-        title := r.URL.Path[len("/edit/"):]
-
-        p, err := loadPage(title)
-        if err != nil {
-            p = &Page{Title: title}
-        }
-
-        fmt.Fprintf(w, "<h1>Editing %s</h1>"+
-            "<form action=\"/save/%s\" method=\"POST\">"+
-            "<textarea name=\"body\">%s</textarea><br>"+
-            "<input type=\"submit\" value=\"Save\">"+
-            "</form>", p.Title, p.Title, p.Body)
-    }
-    ```
-
-- **Improvement**: The hard-coded HTML in `editHandler` can be made cleaner by separating it into an HTML template.
+## 1) **Introduction to Go (Golang)**
+- **Go** is a statically typed, compiled language created by Google. It focuses on simplicity and high performance.
+- **Key features**:
+  - Statically typed
+  - Concurrency support with goroutines
+  - Fast compilation times
+  - Strong tooling (e.g., `go fmt`, `go doc`, etc.)
   
-### **3)The html/template package**
+## 2) **Setting Up Go Environment**
+- Install Go by downloading it from the official [Go website](https://golang.org/dl/).
+- Once installed, check if Go is working by running `go version` in the terminal.
+- Set up the **GOPATH** environment variable. By default, it is set to `$HOME/go` on Unix systems.
+
+## 3) **Hello World Program**
+- **Go structure**: A Go program is defined inside a package, typically the `main` package.
+- **Main Function**: The entry point for a Go program is the `main()` function.
+- **Hello World Example**:
+  - Import the `fmt` package.
+  - Use `fmt.Println()` to print output.
+
+## 4) **Variables and Constants**
+- **Variables**: Declared with `var` keyword, can be initialized during declaration or left uninitialized.
+- **Constants**: Declared with `const` keyword, their values cannot be changed once set.
+- **Short variable declaration**: Can also use `:=` for declaration and initialization in one line.
   
-** Using `html/template` Package**
-- The `html/template` package is used to separate HTML from Go code.
-- It helps keep the layout of pages modular and easier to maintain.
+## 5) **Data Types in Go**
+- **Basic Types**: 
+  - `int`, `float64`, `string`, `bool`
+- **Composite Types**:
+  - **Arrays**: Fixed-length collections of elements.
+  - **Slices**: Dynamic arrays.
+  - **Maps**: Unordered key-value pairs (similar to dictionaries).
+  - **Structs**: Group multiple variables under one name.
+  
+## 6) **Control Structures**
+- **If-else**: Used for conditional execution.
+- **Switch**: Used as an alternative to multiple `if-else` statements.
+- **Loops**: `for` is the only loop in Go, but it can act as `while` or `foreach` with different syntax.
 
-**Creating `edit.html` Template**
-- The `edit.html` template is used to display an editable form for the page content.
-- The template includes a form with a textarea for editing the body and a submit button to save changes.
+## 7) **Functions in Go**
+- Functions are declared using the `func` keyword.
+- Functions can take multiple parameters and return multiple values.
+- Go supports **first-class functions** (functions can be assigned to variables and passed as arguments).
+- **Multiple Return Values**: Go functions can return more than one value, useful for error handling.
 
-** `editHandler(w, r)` with Template**
-- The `editHandler` loads the page (or creates a new empty page if it doesn't exist) and renders the `edit.html` template with the page content.
-- It uses the `html/template` package to execute the template.
+## 8) **Error Handling**
+- Go does not have exceptions. Instead, it uses multiple return values to signal errors.
+- The second return value is usually an error object, which is checked for `nil` to handle errors properly.
+  
+## 9) **Structs and Methods**
+- **Structs**: Used to define custom data types by grouping related fields.
+- **Methods**: Functions that are associated with a type, can be used to define behavior for that type.
 
-**Using `html/template` for Safety**
-- The `html/template` package ensures that user input is safe by automatically escaping any unsafe HTML tags.
-- This helps prevent issues like HTML injection by replacing special characters (e.g., `>` with `&gt;`).
+## 10) **Pointers**
+- Go uses pointers, but they are not as complex as in languages like C or C++.
+- A **pointer** is a variable that holds the memory address of another variable.
+- Go handles memory management automatically using **garbage collection**.
 
-** Creating `view.html` Template**
-- The `view.html` template displays the title and body of the page, along with an "edit" link.
-- This template is used for viewing the content of the page.
+## 11) **Concurrency in Go**
+- Go provides built-in support for **concurrency** with **goroutines** and **channels**.
+- **Goroutines**: Functions that run concurrently with other functions, similar to threads but lighter weight.
+- **Channels**: Used to communicate between goroutines and pass data safely.
 
-** Refactoring with `renderTemplate(w, tmpl, p)`**
-- A helper function `renderTemplate` is created to reduce code duplication between `viewHandler` and `editHandler`.
-- This function takes care of rendering the appropriate template based on the page content.
+## 12) **Go Routines and Channels**
+- **Goroutines** are created with the `go` keyword, enabling the concurrent execution of functions.
+- **Channels** are used for synchronizing goroutines, allowing them to communicate with each other.
+  
+## 13) **The Go Standard Library**
+- Go has a powerful standard library, which includes packages for handling I/O, networking, testing, and more.
+- Key packages:
+  - `net/http`: Provides HTTP functionality to create web servers and clients.
+  - `fmt`: Implements formatted I/O (e.g., `fmt.Println()`).
+  - `os`: Provides functions for working with the operating system (e.g., file I/O).
+  - `time`: For handling time and date functionality.
+  - `math`: Provides basic mathematical functions.
+  
+## 14) **Creating Web Servers with Go**
+- Go's **`net/http`** package allows the creation of simple web servers.
+- **Handler Functions**: Functions that handle HTTP requests.
+- **Routes**: Define specific paths and link them to functions that handle requests.
+- **Listening on Ports**: The server can listen on a specified port to handle requests (e.g., `8080`).
 
-** Modified Handlers**
-- Both the `viewHandler` and `editHandler` are modified to use the `renderTemplate` function to render the templates and display the page content or editing form.
+## 15) **HTML Templates in Go**
+- **html/template**: This package allows embedding HTML code within Go code safely.
+- It ensures that user input is properly escaped to prevent cross-site scripting (XSS).
+- **Template Execution**: Templates can be used to generate dynamic content in HTML pages.
+  
+## 16) **Reading and Writing Files**
+- Go provides a variety of functions in the **`os`** and **`io/ioutil`** packages to read from and write to files.
+- File operations typically involve opening the file, performing the operation (read/write), and closing the file.
+  
+## 17) **Go Modules**
+- Go Modules are a way to manage dependencies in Go projects.
+- They allow developers to version their dependencies and avoid conflicts.
+- **`go.mod`**: This file defines the module's dependencies.
+- **`go get`**: Used to fetch dependencies and add them to your Go project.
 
-### **4) Handling Non-Existent Pages**
-- If a page doesn't exist (e.g., `/view/APageThatDoesntExist`), it should redirect the user to the edit page instead of displaying empty HTML.
-- The `http.Redirect` function is used to send a 302 HTTP status and a Location header to redirect to the appropriate page.
+## 18) **Testing in Go**
+- Go has a built-in testing framework to write unit tests and run them easily.
+- Tests are written in a file ending with `_test.go`.
+- **`testing` package**: Provides functions like `t.Run()`, `t.Error()`, `t.Fail()` for writing tests.
 
-### **5) Saving Pages**
-- The `saveHandler` processes form submissions from the edit page. It extracts the page title from the URL and the content from the form, creates a new `Page` object, and saves it.
-- After saving the content, the user is redirected to the view page using `http.Redirect`.
+## 19) **Deployment and Best Practices**
+- Go programs are compiled into static binaries, making deployment easier as there’s no need for a runtime environment.
+- Best practices:
+  - Write idiomatic Go code (e.g., avoid unnecessary pointers, use short variable declarations).
+  - Follow the Go **Code Style** (e.g., use `go fmt` to format code).
+  - Use **Go Modules** to manage dependencies and versions.
 
-### **6) Error Handling**
-- Proper error handling is added to functions like `renderTemplate` and `saveHandler` to ensure that errors are not ignored and are communicated to the user.
-- The `http.Error` function sends an HTTP status code and an error message to inform the user of any issues.
-
-### **7) Template Caching**
-- To improve performance, templates are parsed once during program initialization and stored in a global variable. 
-- The `ExecuteTemplate` method is then used to render the templates, which avoids re-parsing them every time a page is rendered.
-
-### **8) Validation**
-- The title for each page is validated using a regular expression to ensure it only contains valid characters.
-- The `getTitle` function checks the request URL against the regex and returns the page title if valid, otherwise returns a "404 Not Found" error.
-
-### **9) Introducing Function Literals and Closures**
-- To reduce code duplication, a wrapper function `makeHandler` is introduced. It abstracts the title validation and calls the appropriate handler (`viewHandler`, `editHandler`, `saveHandler`).
-- The `makeHandler` function returns a closure that performs title extraction and validation before invoking the handler with the valid title.
-
-### **10) Simplified Handler Functions**
-- After wrapping handlers with `makeHandler`, the individual handler functions are simplified as they no longer need to handle title extraction and validation.
-
+## 20) **Conclusion**
+- Go is a powerful language for building high-performance applications, especially in areas like web development, networking, and concurrency.
+- The Go ecosystem is rapidly growing, with strong community support and extensive libraries.
+- Beginners can start by mastering the basic syntax, data structures, and handling concurrency, then dive deeper into advanced topics like web development and deployment.
