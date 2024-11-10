@@ -29,10 +29,32 @@
 - **Basic Types**: 
   - `int`, `float64`, `string`, `bool`
 - **Composite Types**:
-  - **Arrays**: Fixed-length collections of elements.
+  - **Arrays**:
+  - Definition: Arrays are fixed-length collections of elements, all of the same type.
+  - Usage: Defined with a specified length; cannot be resized.
+  - Example: var arr [5]int creates an integer array with exactly 5 elements
+    
   - **Slices**: Dynamic arrays.
+  - Definition: Slices are dynamic, flexible views into arrays.
+  - Usage: They don’t have a fixed length; their size can grow or shrink.
+  - Characteristics: Internally backed by an array, but can be resized as needed.
+  - Example: []int{1, 2, 3} creates a slice with elements 1, 2, and 3.
+    
   - **Maps**: Unordered key-value pairs (similar to dictionaries).
+  - Definition: Maps store unordered collections of key-value pairs, similar to dictionaries in other languages.
+  - Usage: Keys must be unique, and each key is associated with a single value.
+  - Example: map[string]int{"apple": 1, "banana": 2} maps string keys to integer values.
+    
   - **Structs**: Group multiple variables under one name.
+  - Definition: Structs are custom data types that group multiple fields under a single type.
+  - Usage: Used to create complex types that aggregate different properties.
+  - Example:
+type Car struct {
+    Make  string
+    Model string
+    Year  int
+}
+The Car struct has fields for make, model, and year.
   
 ## 6) **Control Structures**
 - **If-else**: Used for conditional execution.
